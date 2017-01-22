@@ -1,0 +1,234 @@
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
+using namespace std;
+class student
+{
+public:
+      int id;           
+      string name;   
+      
+	  student(){};
+	  student(string n, int ID){name = n; id = ID;};
+};
+ 
+
+class studentList
+{
+private:
+      class node
+      {
+      public:
+            student data;
+            node * next;
+            node * prev;
+			node(){prev = NULL; next = NULL;};
+			node(student s){data = s; prev = NULL; next = NULL;};
+      };
+     
+      node * head;
+      
+ 
+public:
+      studentList();
+      ~studentList(); 
+      bool empty();
+      void push(student s);
+      student pop();
+      void display();
+};
+
+studentList::studentList()
+{
+  head = NULL;
+}
+
+studentList::~studentList()
+{
+    while(!empty())
+    {
+      node* temp = head;
+      head=head->next;
+      delete temp;
+    }
+}
+
+bool studentList::empty()
+{
+     if(head == NULL)
+     {
+       return true;
+     }
+     return false;      
+}
+
+void studentList::push(student s)
+{
+     if(head == NULL)
+     {
+       node *temp = new node(s);
+       head = temp;
+     }
+     else
+     {
+        node *dummy = new node(s);
+        dummy->next = head;
+        head->prev = dummy;
+        head = dummy;
+     }
+}
+
+student studentList::pop()
+{
+	node *temp = head;
+	if(head == NULL)
+	{
+		cout<<"List is empty."<<endl;
+		student s("None",0);
+		return s;
+	}
+	if(head->next != NULL)
+	{
+		head->next->prev = NULL;
+	}
+	head = temp->next;
+	return temp->data;
+}
+
+void studentList::display()
+{
+     if(head != NULL)
+     {
+       node *current = head;
+       while(current != NULL)
+       {
+         cout<<current->data.name<<" "<<current->data.id<<endl;
+		 current = current->next;
+       }
+
+     }
+}
+
+
+class HashTable
+{
+private:
+      studentList * table; //an array of studentLists
+      int tableSize;       //size of the array
+	  double numItems;
+ 
+public:
+     
+      HashTable(int size){table = new studentList[size];tableSize = size;numItems = 0;};
+	 ~HashTable();
+	  void add(student s);
+      void resize(int newsize);
+      void DisplayTable();
+      
+};
+void HashTable::add(student s)
+{
+   if(numItems/tableSize >= 1)
+   {   
+	   cout<<"There are "<<numItems<<" items in a size "<<tableSize<<" list"<<endl;
+	   resize(2*tableSize);
+	   cout<<"Enlarge from "<<tableSize/2<<" to "<<tableSize<<endl;
+   }
+   int place = s.id%tableSize;   
+   //Linear Probing
+   while(!table[place].empty())
+   {
+	   place += 1;
+	   if(place == tableSize)
+		   place = 0;
+   }
+   table[place].push(s);  
+   numItems++;
+}
+
+
+void HashTable::DisplayTable()
+{
+   for(int i = 0; i < tableSize; i++)
+   {
+      cout<<"Table row "<<i<<endl;
+      table[i].display();
+   }
+   cout<<"Table Size: "<<tableSize<<endl;
+   cout<<"# of students: "<<numItems<<endl;
+ }
+ 
+void HashTable::resize(int newsize)
+{
+   studentList * dummy = new studentList[newsize];
+   student s;
+   int place;
+   for(int i = 0; i < tableSize; i++)
+   {
+      while(!table[i].empty())
+      {
+         s = table[i].pop();
+         place = s.id%newsize;
+		 while(!dummy[place].empty())
+		 {
+			 place += 1;
+			 if(place == tableSize)
+			 {	 
+				 place = 0;
+			 }
+		 }
+         dummy[place].push(s);
+      }
+   }
+   table = dummy;
+   tableSize = newsize;
+}
+
+HashTable::~HashTable()
+{
+   for(int i = 0; i < tableSize; i++)
+   {
+      table[i].~studentList();
+   }
+}
+
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	
+    cout<<"Hash Table"<<endl;
+    HashTable students(10); 
+    student Vijay("Vijay",1588191010);
+    student Ray("Ray",2451881188);
+    student Pappu("Pappu",4461617810);
+    student Sharuah("Sharuah",1237177189);
+    student Jack("Jack",1008181818);
+    student Bob("Bob",451151561616);
+    student Sharu("Sharu",7778981919);
+    student Kartheek("Kartheek",1420867485);
+    student Sanju("Sanju",5645467822);
+    student Indu("Indu",1488900654);
+    student Jessi("Jessi",8994536789);
+    student Anu("Anu",5553456990);
+    students.add(Vijay);		
+    students.add(Pappu);	
+    students.add(Ray);		
+    students.add(Sharuah);		
+    students.add(Jack);		
+    students.add(Bob);	
+    students.add(Sharu);		
+    students.add(Kartheek);		
+    students.add(Sanju);		
+    students.add(Indu);		
+    students.DisplayTable();
+    students.add(Jessi);		
+    students.add(Anu);		
+    students.DisplayTable();
+}

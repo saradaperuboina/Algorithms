@@ -1,0 +1,138 @@
+
+#include <iostream>
+#include <stack>
+#include <queue>
+#include <string>
+using namespace std;
+
+class edge{
+int E[10][10];
+
+public:
+
+void add_edge(int a,int b);
+void DFS(string a[]);
+void BFS(string a[]);
+};
+
+
+void edge::add_edge(int a,int b)
+{
+if (a<10 && b<10){
+E[a][b]=1;
+E[b][a]=1;
+}
+else 
+cout << '\n' << "invalid a and b values " << '\n'; 
+}
+
+
+void edge::DFS(string v[])
+{
+     std::stack<int> mystack;
+bool *visited = new bool[10];
+for (int i = 0; i < 10 ; i++)
+    visited[i] = false;
+cout << '\n' << "The DFS Traversal result of the Graph is :"<< '\n';		
+int i=0,j=0;
+mystack.push(0);
+cout << v[i] << '\t'; 
+while(!mystack.empty())
+{
+	
+	visited[i]=true;
+		for(j=0;j<10;j++)
+		{
+		if(E[i][j]==1 && visited[j]==false)
+			{
+			mystack.push(j);
+			visited[j]=true;
+			break;
+			}
+		}
+		
+		if (j!=10)
+		{
+            i=j;
+            cout << v[i] << '\t'; 
+        }
+		else
+		{
+		    mystack.pop();
+		    if (!mystack.empty())
+			{
+			j=mystack.top();
+			i=j;
+			}
+		}
+}
+}
+
+void edge::BFS(string v[])
+{
+    
+    std::queue<int> myqueue;
+bool *visited = new bool[10];
+for (int i = 0; i < 10; i++)
+    visited[i] = false;
+cout << '\n' << "The BFS Traversal result of the Graph is :"<< '\n'<<'\n';
+int i=0,j=0;
+int s;
+myqueue.push(i);
+
+while(!myqueue.empty())
+{	
+	
+	for (j=0;j<10;j++)
+		{
+		if(E[i][j]==1 && visited[j]==false)
+			{
+			myqueue.push(j);
+			visited[j] = true;
+			//cout << "j value " << j <<'\n';
+			}
+		}
+	    s = myqueue.front();
+        cout << v[s] << "\t";
+        visited[s] = true;
+        myqueue.pop();
+		i= myqueue.front();
+}
+cout << '\n' ;
+}
+
+#include <iostream>
+#include <stack>
+#include <queue>
+#include <string>
+using namespace std;
+int main()
+{
+    class::edge o; 
+    
+string v[10]={"a","b","c","d","e","f","g","h","i","j"};
+o.add_edge(0,1);
+o.add_edge(0,2);
+o.add_edge(0,4);
+o.add_edge(2,1);
+o.add_edge(1,3);
+o.add_edge(1,4);
+o.add_edge(1,5);
+o.add_edge(1,9);
+o.add_edge(1,8);
+o.add_edge(2,4);
+o.add_edge(3,4);
+o.add_edge(4,5);
+o.add_edge(5,6);
+o.add_edge(6,7);
+o.add_edge(7,8);
+o.add_edge(8,9);
+o.add_edge(9,6);
+o.add_edge(5,0);
+o.add_edge(6,0);
+o.add_edge(8,2);
+o.add_edge(5,3);
+o.add_edge(8,4);
+o.BFS(v);
+o.DFS(v);
+}
